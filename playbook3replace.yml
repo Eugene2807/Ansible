@@ -19,4 +19,4 @@
       
   - name: grub2-mkconfig
     ansible.builtin.shell:
-      cmd: /usr/sbin/grub2-mkconfig -o /boot/grub2/grubtest.cfg
+      cmd: /usr/sbin/grub2-mkconfig -o /boot/grub2/grub.cfg
