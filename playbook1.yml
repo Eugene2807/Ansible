@@ -1,0 +1,24 @@
+---
+- name: Apache
+  hosts: all
+  become: yes
+  
+  tasks:
+  
+  - name: install
+    yum: name=httpd state=latest
+    
+  - name: start and enable
+    service: name=httpd state=started enabled=yes
+    
+  - name: create
+    command: touch /var/www/html/index.html
+    
+  - name: insert
+    lineinfile: dest=/var/www/html/index.html line='Welcome to my web server'
+    
+  - name: open port
+    firewalld: port=80/tcp permanent=true state=enabled
+    
+  - name: reloaded
+    systemd: name=firewalld state=reloaded
