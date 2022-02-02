@@ -1,0 +1,22 @@
+---
+- name: grub
+  hosts: all
+  become: yes
+  
+  tasks:
+  
+  - name: rename first
+    replace:
+      path: /etc/default/grub
+      regexp: '^(GRUB_CMDLINE_LINUX=(?:(?![" ]biosdevname=).)*)(?:[" ]biosdevname=\S+)?(.*")$'
+      replace: '\1 biosdevname=0\2' 
+      
+  - name: rename second
+    replace:
+      path: /etc/default/grub
+      regexp: '^(GRUB_CMDLINE_LINUX=(?:(?![" ]net.ifnames=).)*)(?:[" ]net.ifnames=\S+)?(.*")$'
+      replace: '\1 net.ifnames=0\2'
+      
+  - name: grub2-mkconfig
+    ansible.builtin.shell:
+      cmd: /usr/sbin/grub2-mkconfig -o /boot/grub2/grub.cfg
