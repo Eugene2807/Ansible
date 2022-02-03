@@ -5,11 +5,12 @@
   vars_files:
     - users.yml
   tasks:
-    - name: name, comment, home, password
+    - name: name, comment, home, password, not change pass
       user:
         name: "{{ item.name }}"
         comment: "{{ item.name }}@example.com"
         home: "/home/{{ item.name }}"
-        password: "{{ item.password }}"
-        state: present
+        password: "{{ item.password | password_hash('sha512')}}"
+        groups: "root"
+        update_password: on_create
       with_items: "{{ users }}"
