@@ -1,0 +1,20 @@
+---
+# tasks file for apache
+
+- name: install
+  yum: name=httpd state=latest
+  
+- name: start
+  service: name=httpd state=started enabled=yes
+  
+- name: generate
+  template: src=index.j2 dest={{ destin_folder }}/index.html mode=777
+  notify:
+    - restart
+
+- name: open port
+  firewalld: port=80/tcp permanent=true state=enabled
+
+- name: reloaded
+  systemd: name=firewalld state=reloaded
+  

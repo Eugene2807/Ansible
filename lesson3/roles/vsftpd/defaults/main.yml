@@ -1,0 +1,15 @@
+---
+# defaults file for vsftpd
+
+services:
+  - vsftpd
+  - firewalld
+  
+packages:
+  - vsftpd
+  - policycoreutils-python-utils
+  
+fileperms:
+  - /var/ftp/pub
+  - /var/ftp/pub/upload
+  

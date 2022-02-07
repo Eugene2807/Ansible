@@ -1,0 +1,61 @@
+---
+#- name: Playbook for VSFTPD installation & configuration
+
+- name: install packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop: "{{ packages }}"
+  
+- name: copy config
+  template:
+    src: vsftpd.conf.j2
+    dest: /etc/vsftpd/vsftpd.conf
+  notify:
+    - restart vsftpd
+    
+- name: create folder
+  file:
+    path: /var/ftp/pub/upload
+    state: directory
+    mode: 0777
+    recurse: yes
+    
+- name: selinux context ftpd_anon_write
+  seboolean:
+    name: ftpd_anon_write
+    state: true
+    persistent: yes
+
+- name: open ports
+  firewalld:
+    service: ftp
+    permanent: yes
+    state: enabled
+    immediate: yes
+  notify:
+    - restart firewall
+    
+- name: services started and enabled
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop: "{{ services }}"
+  
+- name: setting for /var/ftp/pub/
+  sefcontext:
+    target: '/var/ftp/pub(/.*)?'
+    setype: public_content_t
+    state: present
+    
+- name: setting for /var/ftp/pub/upload
+  sefcontext:
+    target: "/var/ftp/pub/upload(/.*)?"
+    setype: public_content_rw_t
+    state: present
+    
+- name: apply selinux setting for upload
+  ansible.builtin.command: restorecon -F -R -v {{ item }}
+  loop: "{{ fileperms }}"
+  

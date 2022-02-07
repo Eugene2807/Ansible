@@ -1,0 +1,9 @@
+---
+# handlers file for vsftpd
+
+- name: restart firewall
+  systemd: name=firewalld state=reloaded
+  
+- name: restart vsftpd
+  service: name=vsftpd state=restarted
+  
