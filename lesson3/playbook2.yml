@@ -1,0 +1,8 @@
+---
+- name: Vsftpd
+  hosts: all
+  become: yes
+  
+  roles:
+    - vsftpd
+    
